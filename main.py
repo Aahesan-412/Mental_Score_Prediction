@@ -4,12 +4,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
 
 model = joblib.load('Mental_Health_Model.pkl')
 top_countries = ['Other','India','USA','Canada','Australia','UK','Germany','Mexico','Turkey','France']
 
 
 app = FastAPI()
+app.mount("/ui", StaticFiles(directory="."), name="ui")
+@app.get("/")
+async def read_index():
+    return FileResponse("index.html")
 
 app.add_middleware(
     CORSMiddleware,

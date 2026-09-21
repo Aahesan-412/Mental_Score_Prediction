@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = "http://localhost:8888";
   const BAR_COUNT = 20;
 
   const form = document.getElementById("predict-form");
