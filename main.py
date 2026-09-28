@@ -25,13 +25,14 @@ app.add_middleware(
 
 # 🔥 STEP 2: Ab static assets (.js, .css) ko safe location par mount karein
 # Isse browser static assets ko automatic fetch kar sakega
-app.mount("/ui", StaticFiles(directory="."), name="ui")
-
 BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 async def read_index():
-    return FileResponse(BASE_DIR / "index.html")
+    return FileResponse(STATIC_DIR / "index.html")
 
 # Data structures (Pydantic Models)
 class StudentData(BaseModel):
