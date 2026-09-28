@@ -3,43 +3,29 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main  # Triggers the workflow every time you push to the main branch
+      - main
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository code
+      # Step 1: Code ko fetch karna
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # DIAGNOSTIC STEP: Checks if GitHub secrets are readable (Safe: does not leak values)
-      - name: Check Secrets Presence
-        run: |
-          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
-            echo "❌ DOCKER_USERNAME is EMPTY or missing in GitHub Settings!"
-          else
-            echo "✅ DOCKER_USERNAME is correctly recognized by GitHub."
-          fi
-          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
-            echo "❌ DOCKER_PASSWORD is EMPTY or missing in GitHub Settings!"
-          else
-            echo "✅ DOCKER_PASSWORD is correctly recognized by GitHub."
-          fi
-
-      # Step 2: Set up Docker Buildx (allows advanced build features)
+      # Step 2: Docker Buildx setup karna
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 3: Log in to Docker Hub using your stored secrets
+      # Step 3: Log in to Docker Hub (Direct Username Bypass)
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: aahesan41  # Humne yahan direct aapka username likh diya hai
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Build the image and push it to Docker Hub
+      # Step 4: Image build aur push karna
       - name: Build and Push Image
         uses: docker/build-push-action@v6
         with:
