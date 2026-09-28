@@ -14,9 +14,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # DIAGNOSTIC STEP: Checks if GitHub secrets are readable (Safe: does not leak values)
+      - name: Check Secrets Presence
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "❌ DOCKER_USERNAME is EMPTY or missing in GitHub Settings!"
+          else
+            echo "✅ DOCKER_USERNAME is correctly recognized by GitHub."
+          fi
+          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "❌ DOCKER_PASSWORD is EMPTY or missing in GitHub Settings!"
+          else
+            echo "✅ DOCKER_PASSWORD is correctly recognized by GitHub."
+          fi
+
       # Step 2: Set up Docker Buildx (allows advanced build features)
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3  # Fixed: changed from 'actions' to 'docker'
+        uses: docker/setup-buildx-action@v3
 
       # Step 3: Log in to Docker Hub using your stored secrets
       - name: Log in to Docker Hub
