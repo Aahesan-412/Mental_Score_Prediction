@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
+from pathlib import Path
 
 # Model aur database load karna
 model = joblib.load('Mental_Health_Model.pkl')
@@ -26,10 +27,11 @@ app.add_middleware(
 # Isse browser static assets ko automatic fetch kar sakega
 app.mount("/ui", StaticFiles(directory="."), name="ui")
 
-# 🔥 STEP 3: Single Root Route (Jo index.html open karega)
+BASE_DIR = Path(__file__).resolve().parent
+
 @app.get("/")
 async def read_index():
-    return FileResponse("index.html")
+    return FileResponse(BASE_DIR / "index.html")
 
 # Data structures (Pydantic Models)
 class StudentData(BaseModel):
