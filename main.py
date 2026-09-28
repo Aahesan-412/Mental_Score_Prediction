@@ -23,8 +23,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# 🔥 STEP 2: Ab static assets (.js, .css) ko safe location par mount karein
-# Isse browser static assets ko automatic fetch kar sakega
+
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
