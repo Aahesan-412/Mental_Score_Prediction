@@ -8,17 +8,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 
-
+# Model aur database load karna
 model = joblib.load('Mental_Health_Model.pkl')
 top_countries = ['Other','India','USA','Canada','Australia','UK','Germany','Mexico','Turkey','France']
 
-
 app = FastAPI()
-app.mount("/ui", StaticFiles(directory="."), name="ui")
-@app.get("/")
-async def read_index():
-    return FileResponse("index.html")
 
+# 🔥 STEP 1: CORS Middleware sabse pehle hona chahiye taaki browser errors na aayein
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,8 +22,16 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# 🔥 STEP 2: Ab static assets (.js, .css) ko safe location par mount karein
+# Isse browser static assets ko automatic fetch kar sakega
+app.mount("/ui", StaticFiles(directory="."), name="ui")
 
-#A First Pydantic Model
+# 🔥 STEP 3: Single Root Route (Jo index.html open karega)
+@app.get("/")
+async def read_index():
+    return FileResponse("index.html")
+
+# Data structures (Pydantic Models)
 class StudentData(BaseModel):
     age                     : int = Field(..., ge=0 , le=100)
     gender                  : Literal['Male','Female']
@@ -42,22 +46,12 @@ class StudentData(BaseModel):
     sleep_hours_per_night   : float = Field(..., ge=0 , le=24 )
     stress_level            : Literal['Medium', 'Low', 'Very High', 'High']
 
-#Describe what we send back
 class PredictionResponse(BaseModel):
     predicted_mental_health_score: float
 
-
-
-@app.get('/')
-def home():
-    return {'Welcome to my Page'}
-
-
-
-@app.post('/predict' ,response_model=PredictionResponse)
+# ML Prediction Endpoint
+@app.post('/predict', response_model=PredictionResponse)
 def predict(data: StudentData):
-
-
     country_group = data.country if data.country in top_countries else "Other"
     input_row = pd.DataFrame([{
         'Age'                    : data.age,
@@ -76,8 +70,10 @@ def predict(data: StudentData):
     }])
 
     prediction = model.predict(input_row)[0]
-    return PredictionResponse(predicted_mental_health_score=round(float(prediction),2))
+    return PredictionResponse(predicted_mental_health_score=round(float(prediction), 2))
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=5000)
+    # Render deployment ke liye Port 10000 use karna safe hota hai, local par ye 5000 standard hai
+    port = int(os.environ.get("PORT", 5000))
+    uvicorn.run(app, host='0.0.0.0', port=port)

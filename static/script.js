@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://mental-score-prediction-rzro.onrender.com/";
+  const API_BASE = "";
   const BAR_COUNT = 20;
 
   const form = document.getElementById("predict-form");
