@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const API_BASE = "http://localhost:8888";
+  const API_BASE = "https://mental-score-prediction-rzro.onrender.com/";
   const BAR_COUNT = 20;
 
   const form = document.getElementById("predict-form");
